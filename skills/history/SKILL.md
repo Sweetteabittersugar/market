@@ -1,3 +1,8 @@
+---
+name: history
+description: "查询 Agent 执行记录——谁做了什么任务、改了哪些文件、花了多少。触发词：/history、执行记录、agent记录"
+---
+
 # History — Agent 执行记录
 
 查询 Agent 执行记录。

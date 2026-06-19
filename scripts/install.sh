@@ -6,7 +6,9 @@
 #   1. pip install the agency package
 #   2. Register Stop hook in ~/.claude/settings.json
 #   3. Initialize database
-#   4. Print success message
+#   4. Add Agency reference to ~/.claude/CLAUDE.md
+#   5. Copy agents to ~/.claude/agents/, skills to ~/.claude/skills/
+#   6. Print feature summary
 
 set -e
 
@@ -95,6 +97,37 @@ else
     echo "$AGENCY_HINT" > "$GLOBAL_CLAUDE"
     echo "  ✓ Created ~/.claude/CLAUDE.md"
 fi
+
+# ── Step 5: Deploy agents and skills to global Claude Code ──
+echo "→ Deploying agents and skills..."
+AGENTS_SRC="$(dirname "$0")/../agents"
+SKILLS_SRC="$(dirname "$0")/../skills"
+AGENTS_DST="$HOME/.claude/agents"
+SKILLS_DST="$HOME/.claude/skills"
+
+mkdir -p "$AGENTS_DST" "$SKILLS_DST"
+
+# Copy agents
+agent_count=0
+for agent in "$AGENTS_SRC"/*.md; do
+    name=$(basename "$agent")
+    if [ ! -f "$AGENTS_DST/$name" ]; then
+        cp "$agent" "$AGENTS_DST/$name"
+        agent_count=$((agent_count + 1))
+    fi
+done
+echo "  ✓ $agent_count agents → $AGENTS_DST/"
+
+# Copy skills
+skill_count=0
+for skill_dir in "$SKILLS_SRC"/*/; do
+    name=$(basename "$skill_dir")
+    if [ -f "$skill_dir/SKILL.md" ] && [ ! -d "$SKILLS_DST/$name" ]; then
+        cp -r "$skill_dir" "$SKILLS_DST/$name"
+        skill_count=$((skill_count + 1))
+    fi
+done
+echo "  ✓ $skill_count skills → $SKILLS_DST/"
 
 # ── Done ──
 echo ""

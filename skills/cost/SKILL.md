@@ -1,3 +1,8 @@
+---
+name: cost
+description: "查询 Claude Code 费用——今日/本周/本月/按模型。触发词：/cost、费用、花了多少"
+---
+
 # Cost — 费用查询
 
 查询 Agency 费用：今日/本周/本月/按模型。

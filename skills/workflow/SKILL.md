@@ -1,3 +1,8 @@
+---
+name: workflow
+description: "AI 全栈开发 9 阶段工作流（灵感→需求→Spec→技术选型→API→后端→前端→联调→部署）。触发词：工作流、切阶段、第几阶段"
+---
+
 # Workflow — 工作流
 
 AI 全栈开发 9 阶段工作流。

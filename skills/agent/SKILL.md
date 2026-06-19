@@ -1,3 +1,8 @@
+---
+name: agent
+description: "Agent 路由——将任务自动匹配到最合适的 Agent。手动指定：@architect/@coder/@reviewer/@debugger 等。触发词：@agent名、派发、路由"
+---
+
 # Agent — Agent 路由
 
 任务自动匹配最合适的 Agent。

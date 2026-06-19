@@ -42,7 +42,19 @@ cd agency-v2 && bash scripts/install.sh
 cd agency-v2 && scripts\install.bat
 ```
 
-一条命令自动完成：pip 安装 + Stop hook 注册 + 数据库初始化。
+一条命令自动完成：pip 安装 + agents/skills 全局部署 + Stop hook 注册 + CLAUDE.md 入口 + 数据库初始化。
+
+### 它做了什么
+
+安装后，你的 Claude Code 任何项目里都能用：
+
+| 位置 | 内容 | 效果 |
+|------|------|------|
+| `~/.claude/agents/` | 9 个 Agent 定义 | `@coder` `@reviewer` 全局可用 |
+| `~/.claude/skills/` | 7 个 Skill | 说"审查代码"自动触发 review skill |
+| `~/.claude/CLAUDE.md` | 一行入口 | 每个会话开头提醒你有这些命令 |
+| `~/.claude/settings.json` | Stop hook | 会话结束自动记录费用 |
+| `~/.agency/agency.db` | SQLite | 费用 + 执行记录本地存储 |
 
 ### 验证
 
