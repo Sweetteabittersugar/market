@@ -107,33 +107,44 @@ def check_deepseek_key():
 
 
 def check_settings_hook():
-    """Agency Stop hook is registered in settings.json."""
+    """Agency Stop hook is registered in settings.json or settings.local.json."""
     settings = Path.home() / ".claude" / "settings.json"
-    if not settings.exists():
+    local_settings = Path.cwd() / ".claude" / "settings.local.json"
+
+    # Collect all Stop hooks from both global and local settings
+    all_stop_hooks = []
+
+    for settings_path in [settings, local_settings]:
+        if not settings_path.exists():
+            continue
+        try:
+            content = settings_path.read_bytes()
+            # Handle BOM in settings.local.json
+            if content.startswith(b'\xef\xbb\xbf'):
+                content = content[3:]
+            s = json.loads(content)
+            stop_entries = s.get("hooks", {}).get("Stop", [])
+            for entry in stop_entries:
+                for h in entry.get("hooks", []):
+                    all_stop_hooks.append(h.get("command", ""))
+        except Exception:
+            pass
+
+    if not all_stop_hooks:
         return {
             "name": "Stop hook",
             "ok": False,
-            "detail": "~/.claude/settings.json 不存在",
-            "fix": "运行 bash scripts/install.sh 或确认 Claude Code 已安装",
+            "detail": "未注册任何 Stop hook",
+            "fix": "运行 bash scripts/install.sh",
         }
-    try:
-        with open(settings) as f:
-            s = json.load(f)
-        stop_hooks = s.get("hooks", {}).get("Stop", [])
-        found = any("agency.hooks.stop" in str(h) for h in stop_hooks)
-        return {
-            "name": "Stop hook",
-            "ok": found,
-            "detail": "已注册" if found else f"未注册 ({len(stop_hooks)} 个其他 Stop hook)",
-            "fix": "运行 bash scripts/install.sh" if not found else "",
-        }
-    except Exception as e:
-        return {
-            "name": "Stop hook",
-            "ok": False,
-            "detail": f"读取失败: {e}",
-            "fix": "检查 ~/.claude/settings.json 格式",
-        }
+
+    found = any("agency.hooks.stop" in cmd for cmd in all_stop_hooks)
+    return {
+        "name": "Stop hook",
+        "ok": found,
+        "detail": "已注册" if found else f"未注册 ({len(all_stop_hooks)} 个其他 Stop hook)",
+        "fix": "运行 bash scripts/install.sh" if not found else "",
+    }
 
 
 def check_database():
@@ -213,8 +224,9 @@ def format_text(results):
     lines.append("📦 已安装功能：")
     lines.append("  /cost      费用追踪（自动，会话结束后可查）")
     lines.append("  /history   Agent 执行记录")
+    lines.append("  /memory    记忆查询（教训/Dream/会话，按需不注入）")
     lines.append("  /help      内置说明书")
-    lines.append("  @agent名   9 个 Agent 自动路由")
+    lines.append("  @agent名   20+ Agent 自动路由")
     lines.append("")
     lines.append("💡 在 Claude Code 里输入 /help 开始探索")
     return "\n".join(lines)

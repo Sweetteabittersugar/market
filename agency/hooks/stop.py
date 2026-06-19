@@ -193,6 +193,222 @@ def extract_project(cwd):
     return os.path.basename(cwd.rstrip("/\\")) or "unknown"
 
 
+# ── Trace: lightweight transcript summary for Dreaming ──
+
+def _build_highlights(tool_counts, files_touched, corrections, user_msg_count):
+    """Categorize session activity by tool usage patterns.
+
+    Returns markdown bullet list, one line per category.
+    """
+    highlights = []
+
+    # Structural changes: Write + Edit count
+    writes = tool_counts.get("Write", 0)
+    edits = tool_counts.get("Edit", 0)
+    if writes + edits > 50:
+        highlights.append(f"- **大规模改动**: {writes + edits} 次文件操作（Write {writes} + Edit {edits}）")
+    elif writes + edits > 10:
+        highlights.append(f"- **文件修改**: {writes + edits} 次（Write {writes} + Edit {edits}）")
+
+    # Agent delegation
+    agents = tool_counts.get("Agent", 0)
+    if agents > 20:
+        highlights.append(f"- **重度 Agent 协作**: {agents} 次 subagent 派发")
+    elif agents > 0:
+        highlights.append(f"- **Agent 协作**: {agents} 次派发")
+
+    # Research / Web
+    web = tool_counts.get("WebSearch", 0) + tool_counts.get("WebFetch", 0)
+    if web > 30:
+        highlights.append(f"- **重度调研**: {web} 次 WebSearch/Fetch")
+
+    # Debugging / iteration
+    if corrections > 20:
+        highlights.append(f"- **高纠正率**: {corrections} 次纠正信号，可能方向不明确或多次试错")
+
+    # Config changes
+    settings_edits = sum(1 for f in files_touched if "settings" in f.lower())
+    if settings_edits > 0:
+        highlights.append(f"- **配置修改**: {settings_edits} 个 settings 文件改动")
+
+    # Memory changes
+    memory_edits = sum(1 for f in files_touched if "memory" in f.lower() or "lessons" in f.lower())
+    if memory_edits > 0:
+        highlights.append(f"- **记忆更新**: {memory_edits} 个 memory 文件")
+
+    return "\n".join(highlights) if highlights else ""
+
+def extract_trace(transcript_path, session_id):
+    """Extract a lightweight trace summary from a JSONL transcript.
+
+    No API calls — pure text extraction. Extracts:
+      - Session topic (first user message, truncated)
+      - Correction count (how many times user said "不对"/"错了"/"停")
+      - Tool usage summary (counts by tool name)
+      - Files touched (deduped list from Write/Edit calls)
+      - Model(s) used
+
+    Returns a dict ready for YAML frontmatter + markdown body.
+    Returns None if transcript can't be read.
+    """
+    if not transcript_path or not os.path.exists(transcript_path):
+        return None
+
+    topic = ""
+    corrections = 0
+    tool_counts = {}
+    files_touched = set()
+    models_seen = set()
+    user_msg_count = 0
+    assistant_msg_count = 0
+    total_chars = 0
+
+    correction_keywords = ["不对", "错了", "停", "停下", "换方向", "重新",
+                           "wrong", "stop", "fix this", "redo"]
+
+    try:
+        with open(transcript_path, encoding="utf-8") as f:
+            for line in f:
+                try:
+                    data = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+
+                msg = data.get("message", {})
+                role = msg.get("role", "")
+                content = msg.get("content", "")
+
+                # Track total size
+                if isinstance(content, str):
+                    total_chars += len(content)
+
+                # Capture first user message as session topic
+                if role == "user" and not topic and content:
+                    text = str(content).strip()
+                    # Take first line or first 80 chars
+                    first_line = text.split("\n")[0][:120]
+                    topic = first_line
+                    user_msg_count += 1
+                elif role == "user":
+                    user_msg_count += 1
+                    # Check for correction signals
+                    if isinstance(content, str):
+                        lower = content.lower()
+                        if any(kw in lower for kw in correction_keywords):
+                            corrections += 1
+                elif role == "assistant":
+                    assistant_msg_count += 1
+                    # Track models
+                    model = msg.get("model", "")
+                    if model:
+                        models_seen.add(model)
+
+                # Track tool usage from top-level tool_use events
+                # Claude Code JSONL embeds tool calls differently — check content type
+                tool_use = data.get("tool_use") or msg.get("tool_use") or {}
+                if not tool_use:
+                    # Also check for content blocks with tool_use type
+                    cblocks = msg.get("content", [])
+                    if isinstance(cblocks, list):
+                        for block in cblocks:
+                            if isinstance(block, dict) and block.get("type") == "tool_use":
+                                tool_name = block.get("name", "unknown")
+                                tool_counts[tool_name] = tool_counts.get(tool_name, 0) + 1
+                                # Track files from file-editing tools
+                                inp = block.get("input", {})
+                                fp = inp.get("file_path", inp.get("path", ""))
+                                if fp:
+                                    files_touched.add(fp)
+
+                # Top-level tool_use
+                if isinstance(tool_use, dict) and tool_use.get("name"):
+                    tool_name = tool_use.get("name", "unknown")
+                    tool_counts[tool_name] = tool_counts.get(tool_name, 0) + 1
+                    fp = tool_use.get("input", {}).get("file_path", "")
+                    if fp:
+                        files_touched.add(fp)
+
+    except Exception:
+        return None
+
+    if not topic and user_msg_count == 0:
+        return None  # Empty or unreadable transcript
+
+    # Build markdown body
+    body_parts = []
+    body_parts.append(f"**Topic**: {topic or '(no user message)'}")
+    body_parts.append(f"**Messages**: {user_msg_count} user / {assistant_msg_count} assistant")
+    body_parts.append(f"**Corrections**: {corrections}")
+
+    if models_seen:
+        body_parts.append(f"**Models**: {', '.join(sorted(models_seen))}")
+
+    if tool_counts:
+        tc = ", ".join(f"{k}×{v}" for k, v in sorted(tool_counts.items(), key=lambda x: -x[1])[:10])
+        body_parts.append(f"**Tools**: {tc}")
+
+    if files_touched:
+        MAX_FILES = 15
+        files_list = sorted(files_touched)[:MAX_FILES]
+        files_str = "\n".join(f"- `{f}`" for f in files_list)
+        if len(files_touched) > MAX_FILES:
+            files_str += f"\n- ... and {len(files_touched) - MAX_FILES} more"
+        body_parts.append(f"**Files**:\n{files_str}")
+
+    # Highlights: categorize session activity by tool patterns
+    highlights = _build_highlights(tool_counts, files_touched, corrections, user_msg_count)
+    if highlights:
+        body_parts.append(f"**Highlights**:\n{highlights}")
+
+    return {
+        "topic": topic[:120],
+        "corrections": corrections,
+        "tool_counts": tool_counts,
+        "files_touched": sorted(files_touched),
+        "models": sorted(models_seen),
+        "body": "\n\n".join(body_parts),
+    }
+
+
+def write_trace(session_id, trace_data, project="unknown"):
+    """Write a trace summary file to ~/.agency/memory/trace/."""
+    if not trace_data:
+        return
+
+    trace_dir = AGENCY_DIR / "memory" / "trace"
+    trace_dir.mkdir(parents=True, exist_ok=True)
+
+    now = datetime.now()
+    date_str = now.strftime("%Y-%m-%d")
+    slug = session_id[:8] if session_id else "unknown"
+
+    # YAML frontmatter + markdown body
+    content = f"""---
+id: trace-{slug}
+type: trace
+scope: project:{project}
+created: {date_str}
+updated: {date_str}
+expires: {int(now.timestamp() + 90 * 24 * 3600)}
+trust: 1.0
+tags: [session-trace, project:{project}]
+source: stop-hook
+corrections: {trace_data['corrections']}
+models: [{', '.join(trace_data['models'])}]
+tools: [{', '.join(f'{k}:{v}' for k, v in sorted(trace_data['tool_counts'].items()))}]
+---
+
+# Session {slug}
+
+{trace_data['body']}
+"""
+    trace_file = trace_dir / f"{date_str}-{slug}.md"
+    try:
+        trace_file.write_text(content, encoding="utf-8")
+    except Exception:
+        pass  # Trace writing is best-effort, never blocks session end
+
+
 def main():
     """Main entry point. Reads hook data from stdin, processes transcript."""
     try:
@@ -212,9 +428,17 @@ def main():
 
         # Extract and record
         models = extract_usage_from_transcript(transcript_path)
+        project = extract_project(cwd)
         if models:
-            project = extract_project(cwd)
             write_cost_records(session_id, models, project)
+
+        # Extract and write trace (best-effort, never block cost recording)
+        try:
+            trace = extract_trace(transcript_path, session_id)
+            if trace:
+                write_trace(session_id, trace, project)
+        except Exception:
+            pass  # Trace writing failure is non-critical
 
     except Exception:
         log_error(f"Stop hook exception:\n{traceback.format_exc()}")

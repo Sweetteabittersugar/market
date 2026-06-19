@@ -146,6 +146,20 @@ mkdir -p "$AGENTS_DST" "$SKILLS_DST"
 
 # Sync mode: overwrite existing; install mode: skip existing
 if [ "$SYNC_ONLY" = true ]; then
+    # Backup before overwriting (keep last 5)
+    BACKUP_DIR="$HOME/.claude/backups/$(date +%Y-%m-%d-%H%M%S)"
+    mkdir -p "$BACKUP_DIR/agents" "$BACKUP_DIR/skills"
+    cp -r "$AGENTS_DST"/* "$BACKUP_DIR/agents/" 2>/dev/null
+    cp -r "$SKILLS_DST"/* "$BACKUP_DIR/skills/" 2>/dev/null
+    echo "  ✓ 已备份到 $BACKUP_DIR"
+
+    # Clean old backups (keep last 5)
+    backup_count=$(ls -d "$HOME/.claude/backups"/*/ 2>/dev/null | wc -l)
+    if [ "$backup_count" -gt 5 ]; then
+        ls -dt "$HOME/.claude/backups"/*/ | tail -n +6 | xargs rm -rf
+        echo "  ✓ 清理旧备份（保留最近5个）"
+    fi
+
     # Force overwrite
     cp -f "$AGENTS_SRC"/*.md "$AGENTS_DST/" 2>/dev/null
     agent_count=$(ls "$AGENTS_SRC"/*.md 2>/dev/null | wc -l)
