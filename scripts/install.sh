@@ -1,19 +1,30 @@
 #!/bin/bash
 # install.sh — Agency v2 one-command install
-# Usage: bash install.sh
+# Usage:
+#   bash install.sh          # full install
+#   bash install.sh --sync   # sync only (re-copy agents/skills, skip pip/hooks/db)
 #
 # What it does:
 #   1. pip install the agency package
-#   2. Register Stop hook in ~/.claude/settings.json
+#   2. Register Stop + SessionStart hooks in ~/.claude/settings.json
 #   3. Initialize database
 #   4. Add Agency reference to ~/.claude/CLAUDE.md
 #   5. Copy agents to ~/.claude/agents/, skills to ~/.claude/skills/
 #   6. Print feature summary
 
+SYNC_ONLY=false
+if [ "$1" = "--sync" ]; then
+    SYNC_ONLY=true
+    echo "═══ Agency v2 — Sync ═══"
+    echo ""
+fi
+
 set -e
 
 AGENCY_DIR="$HOME/.agency"
 SETTINGS_FILE="$HOME/.claude/settings.json"
+
+if [ "$SYNC_ONLY" = false ]; then
 
 echo "═══ Agency v2 — Install ═══"
 echo ""
@@ -122,7 +133,9 @@ else
     echo "  ✓ Created ~/.claude/CLAUDE.md"
 fi
 
-# ── Step 5: Deploy agents and skills to global Claude Code ──
+fi  # end of SYNC_ONLY=false block
+
+# ── Step 5: Deploy agents and skills (always runs, --sync mode only does this) ──
 echo "→ Deploying agents and skills..."
 AGENTS_SRC="$(dirname "$0")/../agents"
 SKILLS_SRC="$(dirname "$0")/../skills"
@@ -131,27 +144,40 @@ SKILLS_DST="$HOME/.claude/skills"
 
 mkdir -p "$AGENTS_DST" "$SKILLS_DST"
 
-# Copy agents
-agent_count=0
-for agent in "$AGENTS_SRC"/*.md; do
-    name=$(basename "$agent")
-    if [ ! -f "$AGENTS_DST/$name" ]; then
-        cp "$agent" "$AGENTS_DST/$name"
-        agent_count=$((agent_count + 1))
-    fi
-done
-echo "  ✓ $agent_count agents → $AGENTS_DST/"
+# Sync mode: overwrite existing; install mode: skip existing
+if [ "$SYNC_ONLY" = true ]; then
+    # Force overwrite
+    cp -f "$AGENTS_SRC"/*.md "$AGENTS_DST/" 2>/dev/null
+    agent_count=$(ls "$AGENTS_SRC"/*.md 2>/dev/null | wc -l)
+    for skill_dir in "$SKILLS_SRC"/*/; do
+        name=$(basename "$skill_dir")
+        [ -f "$skill_dir/SKILL.md" ] && rm -rf "$SKILLS_DST/$name" && cp -r "$skill_dir" "$SKILLS_DST/$name"
+    done
+    skill_count=$(ls -d "$SKILLS_SRC"/*/ 2>/dev/null | wc -l)
+    echo "  ✓ $agent_count agents synced → $AGENTS_DST/"
+    echo "  ✓ $skill_count skills synced → $SKILLS_DST/"
+else
+    # Install mode: only copy new files
+    agent_count=0
+    for agent in "$AGENTS_SRC"/*.md; do
+        name=$(basename "$agent")
+        if [ ! -f "$AGENTS_DST/$name" ]; then
+            cp "$agent" "$AGENTS_DST/$name"
+            agent_count=$((agent_count + 1))
+        fi
+    done
+    echo "  ✓ $agent_count agents → $AGENTS_DST/"
 
-# Copy skills
-skill_count=0
-for skill_dir in "$SKILLS_SRC"/*/; do
-    name=$(basename "$skill_dir")
-    if [ -f "$skill_dir/SKILL.md" ] && [ ! -d "$SKILLS_DST/$name" ]; then
-        cp -r "$skill_dir" "$SKILLS_DST/$name"
-        skill_count=$((skill_count + 1))
-    fi
-done
-echo "  ✓ $skill_count skills → $SKILLS_DST/"
+    skill_count=0
+    for skill_dir in "$SKILLS_SRC"/*/; do
+        name=$(basename "$skill_dir")
+        if [ -f "$skill_dir/SKILL.md" ] && [ ! -d "$SKILLS_DST/$name" ]; then
+            cp -r "$skill_dir" "$SKILLS_DST/$name"
+            skill_count=$((skill_count + 1))
+        fi
+    done
+    echo "  ✓ $skill_count skills → $SKILLS_DST/"
+fi
 
 # ── Done ──
 echo ""

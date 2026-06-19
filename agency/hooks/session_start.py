@@ -47,21 +47,20 @@ def find_handoff(cwd):
 
 
 def extract_stage(handoff_path):
-    """Extract current stage number from handoff.md."""
+    """Extract current stage number from handoff.md.
+
+    Expected format: ## stage: N  (line starts with exactly this)
+    """
     try:
         text = handoff_path.read_text(encoding="utf-8")
         for line in text.split("\n"):
             line = line.strip()
-            if line.startswith("当前状态") or line.startswith("进入阶段"):
-                # e.g. "Agency v2 技术选型完成，进入阶段 3（数据/API 设计）"
-                for ch in line:
-                    if ch in "0123456789":
-                        return ch
-                    if ch == "-":
-                        continue
-                # Try to find stage number
+            if line.startswith("## stage:") or line.startswith("## Stage:"):
+                # Extract number after colon
+                after = line.split(":", 1)[1].strip()
+                # Take first numeric part (handles "-1" or "3" or "9 (复盘)")
                 import re
-                m = re.search(r"阶段\s*(\-?\d+)", line)
+                m = re.search(r"(-?\d+)", after)
                 if m:
                     return m.group(1)
     except Exception:
