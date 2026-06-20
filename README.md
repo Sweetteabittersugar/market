@@ -1,125 +1,136 @@
-# Agency v2
+# 🛒 market — AI 开发装备商场
 
-> Claude Code 个性化增强包——内置工作流、Agent 库、Skill 库、费用追踪。
-> 纯对话，零 GUI。一条命令安装，所有功能通过对话触发。
+> 不搜索，不翻文档。走进来，挑想要的，拿走。
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-2.0.0-green.svg)](https://github.com/Sweetteabittersugar/agency-v2/releases)
-[![Zero Dependencies](https://img.shields.io/badge/deps-0-brightgreen.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Skills](https://img.shields.io/badge/skills-12-blue)]()
+[![Agents](https://img.shields.io/badge/agents-15-green)]()
+[![Plugins](https://img.shields.io/badge/plugins-5-orange)]()
 
-## 是什么
+---
 
-Agency v2 = Claude Code + 你的个性化增强包。安装后 Claude Code 自动拥有：费用追踪、Agent 路由、Skill 库、工作流引擎、执行记录、使用说明书。
+## 🔥 两种安装方式
 
-**对比**：
-
-| | 裸 Claude Code | 装 Agency v2 |
-|---|---|---|
-| 费用追踪 | ❌ 不知道花了多少 | ✅ `/cost` 今日/本周/本月 |
-| Agent 路由 | ❌ 手动派发 | ✅ 关键词自动匹配 |
-| Skill 库 | ❌ 自己写 prompt | ✅ 7 个预设流程 |
-| 工作流 | ❌ 无章法 | ✅ 9 阶段全栈 + 模型分工 |
-| 说明书 | ❌ 网上搜 | ✅ `/help` 内置 |
-
-## 快速开始
-
-### 你必须做的（一次性）
-
-1. **装 Node.js ≥ 18** → [nodejs.org](https://nodejs.org)
-2. **装 Claude Code** → [claude.ai/code](https://claude.ai/code)（需要 Node.js）
-3. **装 CC Switch** + 配置 DeepSeek API Key（[注册 DeepSeek](https://platform.deepseek.com/)）
-4. **装 Python ≥ 3.8**（大概率已经有了）
-
-### 我们自动做的
+### 方式一：Claude Code 插件（推荐）
 
 ```bash
-# macOS / Linux / Windows Git Bash
-git clone https://github.com/Sweetteabittersugar/agency-v2.git
-cd agency-v2 && bash scripts/install.sh
+# 注册商场
+claude plugin marketplace add Sweetteabittersugar/market
 
-# Windows CMD（没装 Git Bash 的话）
-cd agency-v2 && scripts\install.bat
+# 挑一个装上
+claude plugin install workflow-core@Sweetteabittersugar/market    # 工作流
+claude plugin install research-kit@Sweetteabittersugar/market     # 调研
+claude plugin install story-dev@Sweetteabittersugar/market        # 故事驱动
+claude plugin install agent-personas@Sweetteabittersugar/market   # Agent 角色
+claude plugin install full-arsenal@Sweetteabittersugar/market     # 全都要
 ```
 
-一条命令自动完成：pip 安装 + agents/skills 全局部署 + Stop hook 注册 + CLAUDE.md 入口 + 数据库初始化。
-
-### 它做了什么
-
-安装后，你的 Claude Code 任何项目里都能用：
-
-| 位置 | 内容 | 效果 |
-|------|------|------|
-| `~/.claude/agents/` | 9 个 Agent 定义 | `@coder` `@reviewer` 全局可用 |
-| `~/.claude/skills/` | 7 个 Skill | 说"审查代码"自动触发 review skill |
-| `~/.claude/CLAUDE.md` | 一行入口 | 每个会话开头提醒你有这些命令 |
-| `~/.claude/settings.json` | Stop hook | 会话结束自动记录费用 |
-| `~/.agency/agency.db` | SQLite | 费用 + 执行记录本地存储 |
-
-### 验证
+### 方式二：一键安装（传统）
 
 ```bash
-python -m agency.check   # 环境检查，一键诊断
+git clone https://github.com/Sweetteabittersugar/market.git
+cd market && bash scripts/install.sh
+python -m agency.check   # 验证
 ```
 
-安装后在 Claude Code 里：
+安装后对话里直接用：`/spec` `/research` `/gate-check` `/retro` `/create-story` `/cost` `/help`
+
+---
+
+## 📦 货架
+
+### 🔧 workflow-core — 工作流核心
+**结构化 AI 开发流程：从想法到复盘。**
+
+| 包含 | 说明 |
+|------|------|
+| `/spec` | 需求→Spec 一条龙 |
+| `/gate-check` | 阶段门控检查 + 🔴硬门控 |
+| `/retro` | 复盘教训提取→写入 memory |
+| 工作流文档 | 12 阶段 + 3 种协作模式 + DoR/DoD |
+| 门控清单 | 4 维度通用 + 每阶段特定 |
+
+---
+
+### 📚 research-kit — 调研工具
+**不凭训练数据做决策。**
+
+| 包含 | 说明 |
+|------|------|
+| `/research` | 4 步流程 × 4 级来源 × 双门验证 |
+| 调研模板 | 发现→分析→建议→来源表→分歧 |
+
+---
+
+### 📖 story-dev — 故事驱动开发
+**借鉴 BMAD：Agent 打开 Story 文件就能干活。**
+
+| 包含 | 说明 |
+|------|------|
+| `/create-story` | Spec→Epic→Story 文件生成 |
+| Story 模板 | Context 段 + 可观测性段 + Dev/QA Record |
+| 项目惯例 | 环境·风格·陷阱·模式库 |
+
+---
+
+### 🤖 agent-personas — Agent 角色包
+**5 个带项目约束的自定义 Agent。**
+
+| Agent | 专长 |
+|-------|------|
+| `@pm` | 需求挑战·故事分解·阶段判断 |
+| `@architect` | Spec·技术选型（知项目约束） |
+| `@qa` | 门控检查·功能验证·安全扫描 |
+| `@reviewer` | 复盘·教训提取·记忆写入 |
+| `@code-reviewer` | 四维度代码审查 |
+
+---
+
+### 🛒 full-arsenal — 全家桶
+**全都要——12 Skill + 15 Agent + 3 模板 + 工作流 + 惯例 + 货架。**
+
+---
+
+## 📊 对比
+
+| | workflow-core | research-kit | story-dev | agent-personas | full-arsenal |
+|---|---|---|---|---|---|
+| Skill | 3 | 1 | 1 | — | 12 |
+| Agent | — | — | — | 5 | 15 |
+| 模板 | 1 | 1 | 1 | — | 3 |
+| 工作流 | ✅ | — | — | — | ✅ |
+| 惯例 | — | — | ✅ | — | ✅ |
+| 费用追踪 | — | — | — | — | ✅ |
+
+---
+
+## 📁 目录
 
 ```
-/cost       → 今日/本周/本月费用（第一次会话结束后才有数据）
-/history    → Agent 执行记录
-/help       → 查看所有功能
-@coder 帮我写个函数
+market/
+├── skills/         12 个 Skill（源码）
+├── agents/         15 个 Agent 定义
+├── templates/      3 个模板
+├── docs/           工作流·惯例·装备货架
+├── plugins/        5 个可安装套装
+├── scripts/        安装脚本
+├── src/            实现（Python）
+└── .claude-plugin/ 商场注册表
 ```
 
-## 常见问题
+---
 
-| 问题 | 原因 | 解决 |
-|------|------|------|
-| `/cost` 显示 ¥0.00 | 还没有会话结束过 | 正常。结束当前对话后再看 |
-| `/cost` 报错找不到命令 | Hook 没注册上 | 重跑 `bash scripts/install.sh` |
-| 中文乱码 / emoji 不显示 | Windows 终端默认 GBK | `chcp 65001` 切 UTF-8，或用 Windows Terminal |
-| `python` 命令不存在 | 没装 Python 或没加 PATH | [python.org](https://python.org) 下载安装 |
-| Stop hook 没触发 | settings.json 路径不对 | 跑 `python -m agency.check` 诊断 |
+## ❓ 常见问题
 
-## 架构
+| 问题 | 解决 |
+|------|------|
+| 和 BMAD 什么关系？ | 工作流借鉴 BMAD 的故事驱动 + 角色分工理念，但完全独立实现 |
+| 需要什么环境？ | Claude Code + Python ≥ 3.8 + DeepSeek API Key |
+| 能单独用某个 Skill 吗？ | 能——直接复制 `skills/` 下对应目录到 `.claude/skills/` |
+| 插件和 skills/ 什么关系？ | `plugins/` 是打包好的套装，`skills/` 是散件——挑着用 |
 
-```
-Agency v2 = Claude Code + 三层增强
+---
 
-指令层（静态）: CLAUDE.md + agents/ + skills/ + docs/
-脚本层（按需）: workflow.sh + cost.py + history.py
-服务层（静默）: hooks/stop.py → ~/.agency/agency.db
-```
+## 📄 License
 
-## 包含什么
-
-| 模块 | 内容 | 数量 |
-|------|------|------|
-| Agent 库 | architect / coder / reviewer / debugger / explorer / test-writer / devops / doc-writer / security-reviewer | 9 |
-| Skill 库 | review / debug / cost / history / help / workflow / agent | 7 |
-| 文档 | quickstart / commands / agents / skills / workflow / faq | 6 |
-| 工作流 | 9 阶段全栈开发（灵感 → 部署），双模型分工 | 1 |
-| 后端 | cost.py / history.py / db.py / stop hook / install.sh | 5 |
-
-## 依赖
-
-- Claude Code（运行时）
-- CC Switch（模型切换）
-- Python ≥ 3.8（费用追踪）
-- DeepSeek V4 Pro + MiMo V2.5 Pro API Key
-
-Agency 本身**零第三方 Python 依赖**——只用了 sqlite3、json、os、pathlib、subprocess。
-
-## 卸载
-
-```bash
-# 1. 删 hook：编辑 ~/.claude/settings.json，删掉含 "agency.hooks.stop" 的条目
-# 2. 删数据：
-rm ~/.agency/agency.db
-# 3. 删包：
-pip uninstall agency-v2
-```
-
-## License
-
-MIT © 2026
+MIT © 2026 Sweetteabittersugar
