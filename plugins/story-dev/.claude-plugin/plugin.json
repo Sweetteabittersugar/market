@@ -1,0 +1,1 @@
+{"name":"story-dev","version":"1.0.0","description":"📖 故事驱动开发 — /create-story 从 Spec 拆解 Story 文件。Story 模板含 Context 段（Agent 打开即懂）、可观测性段（日志/指标/链路）、Dev/QA Record（阶段交接）。附带项目惯例文档。"}

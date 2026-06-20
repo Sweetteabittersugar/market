@@ -1,0 +1,40 @@
+{
+  "name": "market",
+  "description": "🛒 AI 开发装备商场 — Skill·Agent·模板·工作流，挑想要的拿走",
+  "owner": {
+    "name": "Sweetteabittersugar",
+    "url": "https://github.com/Sweetteabittersugar"
+  },
+  "plugins": [
+    {
+      "name": "workflow-core",
+      "description": "🔧 工作流核心：/spec /gate-check /retro + 12阶段工作流 + 门控清单",
+      "version": "1.0.0",
+      "source": { "source": "url", "url": "https://github.com/Sweetteabittersugar/ai.git", "ref": "master", "subdir": "plugins/workflow-core" }
+    },
+    {
+      "name": "research-kit",
+      "description": "📚 调研工具：/research 标准化调研（4步·4级来源·双门验证）+ 报告模板",
+      "version": "1.0.0",
+      "source": { "source": "url", "url": "https://github.com/Sweetteabittersugar/ai.git", "ref": "master", "subdir": "plugins/research-kit" }
+    },
+    {
+      "name": "story-dev",
+      "description": "📖 故事驱动开发：/create-story + Story模板(可观测性段) + 项目惯例",
+      "version": "1.0.0",
+      "source": { "source": "url", "url": "https://github.com/Sweetteabittersugar/ai.git", "ref": "master", "subdir": "plugins/story-dev" }
+    },
+    {
+      "name": "agent-personas",
+      "description": "🤖 Agent 角色包：pm + architect + qa + reviewer + code-reviewer（带项目约束）",
+      "version": "1.0.0",
+      "source": { "source": "url", "url": "https://github.com/Sweetteabittersugar/ai.git", "ref": "master", "subdir": "plugins/agent-personas" }
+    },
+    {
+      "name": "full-arsenal",
+      "description": "🛒 全家桶：7 Skill + 10 Agent + 3 模板 + 12阶段工作流 + 装备货架",
+      "version": "1.0.0",
+      "source": { "source": "url", "url": "https://github.com/Sweetteabittersugar/ai.git", "ref": "master", "subdir": "plugins/full-arsenal" }
+    }
+  ]
+}
