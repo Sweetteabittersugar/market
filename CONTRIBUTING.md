@@ -25,7 +25,7 @@ pip install -e .
 
 1. 在 `agents/` 下创建 `<name>.md`
 2. 在 `AGENTS.md` 路由表添加一行
-3. 在 `docs/agents.md` 添加一行
+3. 在 `docs/AGENTS.md` 添加一行
 
 ## 添加新 Skill
 
