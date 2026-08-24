@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.0] — 2026-08-25 — Marketplace
+
+### Added
+- 五个可独立安装的 Claude Code 插件：`workflow-core`、`research-kit`、`story-dev`、`agent-personas`、`full-arsenal`
+- 固定到公开 `Sweetteabittersugar/market` 与 `master` ref 的 Marketplace 清单
+- 离线结构、版本、链接、公开边界、Python 编译和差异验证
+- GitHub CI 与归档稳定版文档
+
+### Security
+- 删除仓库 `.context` 和内部治理链接
+- 移除个人工作区绝对路径与私有根仓依赖
+- 明示插件继承当前用户权限及服务商数据边界
+
+> Marketplace `1.0.0` 与下方历史 Python helper `agency-v2 2.0.0` 是两个独立版本序列。
+
 ## [2.0.0] — 2026-06-19
 
 ### Added

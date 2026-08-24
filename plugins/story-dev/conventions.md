@@ -4,10 +4,8 @@
 
 ## 环境
 
-- **OS**: Windows 11 Home China
-- **Shell**: Git Bash（路径 `/` 不 `\`），没有 `/tmp`
-- **Python**: 3.11 conda 管理，跑前 `source $HOME/anaconda3/etc/profile.d/conda.sh && conda activate`
-- **AI 路由**: 以 `D:/ai/config/router-policy.toml` 与当前任务契约为准，不在插件中固定模型
+- **OS / Shell / Runtime**: 读取用户项目的清单和说明，不假设固定平台、版本或环境管理器
+- **AI 路由**: 以用户项目适用的规则、可选路由配置与当前任务契约为准，不在插件中固定模型
 
 ## 代码风格
 
@@ -30,7 +28,7 @@
 
 ## 常见陷阱
 
-- Windows 路径用 `/` 不 `\`
+- 路径写法遵循当前平台与项目约定，不硬编码个人绝对路径
 - 不要硬编码密钥/密码/Token——用环境变量
 - 不要 `print()` 调试——用 log
 - 不原地修改对象——新建返回

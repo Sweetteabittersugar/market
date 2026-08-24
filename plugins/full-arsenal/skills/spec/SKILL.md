@@ -17,7 +17,7 @@ category: workflow
 
 ## 路由要求
 
-模型、推理深度和编排模式由 `D:/ai/config/router-policy.toml`、`D:/ai/config/workflow-policy.toml` 与当前任务契约共同决定。此技能只声明 `requirements_analysis`、`research`、`writing` 和 `verification` 能力需求，不固定供应商或模型名。
+模型、推理深度和编排模式由用户项目的适用规则、可选路由配置与当前任务契约共同决定。此技能只声明 `requirements_analysis`、`research`、`writing` 和 `verification` 能力需求，不固定供应商、模型名或工作区路径。
 
 ## 流程
 
