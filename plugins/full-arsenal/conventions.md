@@ -7,7 +7,7 @@
 - **OS**: Windows 11 Home China
 - **Shell**: Git Bash（路径 `/` 不 `\`），没有 `/tmp`
 - **Python**: 3.11 conda 管理，跑前 `source $HOME/anaconda3/etc/profile.d/conda.sh && conda activate`
-- **AI 主力**: DeepSeek V4 Pro（编程/推理），MiMo V2.5 Pro（前端/视觉）
+- **AI 路由**: 以 `D:/ai/config/router-policy.toml` 与当前任务契约为准，不在插件中固定模型
 
 ## 代码风格
 

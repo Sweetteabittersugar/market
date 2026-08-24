@@ -15,7 +15,7 @@
 ### 技术栈
 - **语言**: Python 3.11（conda 管理）
 - **Shell**: Git Bash（路径 `/` 不 `\`），PowerShell 5.1 备选
-- **AI 主力**: DeepSeek V4 Pro（编程/推理），MiMo V2.5 Pro（前端/视觉）
+- **AI 路由**: 以 `D:/ai/config/router-policy.toml` 与当前任务契约为准，不在角色文件中固定模型
 - **部署**: Docker（Windows）
 
 ### 设计原则

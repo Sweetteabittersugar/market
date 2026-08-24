@@ -30,7 +30,7 @@ claude plugin install full-arsenal@Sweetteabittersugar     # 全都要
 | `/spec` | 需求→Spec 一条龙 |
 | `/gate-check` | 阶段门控检查（PASS/CONCERNS/FAIL + 🔴硬门控） |
 | `/retro` | 复盘教训提取→写入 memory |
-| 12 阶段工作流 | 3 种协作模式（层级式/对话式/流水线式）+ DoR/DoD 双门控 |
+| 12 阶段工作流 | 风险驱动的任务契约 + DoR/DoD 双门控 |
 | 门控清单 | 4 维度通用 + 每阶段特定 + 硬门控 |
 
 **适合**: 想让 AI 开发有章法的人——不再"凭感觉写代码"。
@@ -52,7 +52,7 @@ claude plugin install full-arsenal@Sweetteabittersugar     # 全都要
 ---
 
 ### 📖 故事驱动开发 (`story-dev`)
-**借鉴 BMAD：Agent 打开 Story 文件就能干活，不翻架构文档。**
+**借鉴 BMAD：Story 提供最小充分上下文；执行者仍读取适用的项目规则和任务契约。**
 
 | 包含 | 说明 |
 |------|------|
@@ -66,6 +66,8 @@ claude plugin install full-arsenal@Sweetteabittersugar     # 全都要
 
 ### 🤖 Agent 角色包 (`agent-personas`)
 **5 个带项目约束的自定义 Agent——开箱即用。**
+
+这些是按需加载的能力提示，不是常驻员工或默认并发团队；实际编排由任务契约与工作区路由策略决定。
 
 | Agent | 专长 |
 |-------|------|
@@ -107,6 +109,6 @@ claude plugin install full-arsenal@Sweetteabittersugar     # 全都要
 
 本商场所有装备来自 [Sweetteabittersugar/ai](https://github.com/Sweetteabittersugar/ai) 项目的可复用部分。不含密钥、个人路径、项目数据。
 
-工作流方法论借鉴 BMAD (Breakthrough Method of Agile AI-Driven Development) + AutoGen/CrewAI 多 Agent 协作模式 + Scrum DoR/DoD 双门控。
+工作流方法论借鉴 BMAD 与 Scrum 的阶段/门禁思路；多智能体运行以 `D:/ai/docs/智能体编排架构.md` 为准，默认单智能体、唯一写入者、按风险独立复核。
 
 调研标准借鉴 BMAD research skills + EviBound 双门验证 + Claude Code 4 级来源可信度。

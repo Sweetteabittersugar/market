@@ -15,6 +15,10 @@ category: workflow
 - 大任务结束后想提取经验
 - 同类型错误出现 ≥2 次时
 
+## 路由要求
+
+模型、推理深度和编排模式由工作区路由策略与当前任务契约决定。此技能声明 `root_cause_analysis`、`history_analysis`、`writing` 和 `verification` 能力需求；事故或系统性失败应提升风险与独立复核强度，不固定模型名。
+
 ## 流程
 
 ### 1. 扫描范围

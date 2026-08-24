@@ -30,11 +30,11 @@
 ```
 D:\ai\
 ├── projects/       ← 开发项目
-├── 学习/           ← 学习笔记
-├── 工作日志/        ← 每日整理
+├── library/        ← 课程、日志、点子与共享资料
+├── ops/            ← Docker 与 Git 工作树
+├── storage/        ← 归档、备份与软回收
 ├── .claude/        ← Claude Code 配置
-├── maestro/        ← Agent 调度系统
-└── docker/         ← Docker 配置
+└── maestro/        ← Agent 调度系统
 ```
 
 ## 输出格式

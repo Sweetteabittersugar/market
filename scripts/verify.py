@@ -11,6 +11,8 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
+MARKET_REPOSITORY_URL = "https://github.com/Sweetteabittersugar/market.git"
+MARKET_REF = "master"
 
 
 class VerificationError(RuntimeError):
@@ -55,6 +57,14 @@ def verify_marketplace() -> None:
         source = item.get("source")
         if not isinstance(source, dict):
             raise VerificationError(f"marketplace plugin {name} source must be an object")
+        if require_string(source, "source", f"marketplace plugin {name} source") != "url":
+            raise VerificationError(f"marketplace plugin {name} source type must be url")
+        if require_string(source, "url", f"marketplace plugin {name} source") != MARKET_REPOSITORY_URL:
+            raise VerificationError(
+                f"marketplace plugin {name} must resolve from canonical market repository"
+            )
+        if require_string(source, "ref", f"marketplace plugin {name} source") != MARKET_REF:
+            raise VerificationError(f"marketplace plugin {name} source ref must be {MARKET_REF}")
         subdir = require_string(source, "subdir", f"marketplace plugin {name} source")
         if subdir != f"plugins/{name}":
             raise VerificationError(

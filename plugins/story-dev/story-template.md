@@ -1,14 +1,15 @@
 # Story S{XX}: {标题}
 
-> 一个 agent 打开这个文件就能干活，不用翻任何其他文档。
+> Story 提供最小充分上下文；执行者仍必须读取适用的 `AGENTS.md` 和关联任务契约。
 
 | Field | Value |
 |-------|-------|
 | Story ID | S{XX} |
 | Epic | {epic-name} |
 | Status | backlog |
-| Agent | {recommended-agent} |
-| 协作模式 | {层级式 / 对话式 / 流水线式} |
+| Persona Hint | {recommended-persona or none} |
+| Task Contract | `.context/tasks/{task-id}.yaml` |
+| Orchestration Hint | {single / manager_workers / evaluator_optimizer} |
 | Depends On | {S{XX} or none} |
 
 ## What & Why
@@ -17,7 +18,7 @@
 
 ## Context
 
-Agent 需要的所有参考资料——不翻文档，直接看这里。
+只列完成本 Story 必需的精确资料；不要复制整份文档或会话历史。
 
 - **项目惯例**: `docs/conventions.md`（命名/模式/陷阱——新人必读）
 - **Spec**: `docs/{spec}.md#section`
@@ -34,7 +35,7 @@ Agent 需要的所有参考资料——不翻文档，直接看这里。
 
 ## Files to Create/Modify
 
-每个 Story ≤2 个文件变更。
+保持可独立验收的最小范围；真正允许写入的边界以任务契约 `allowed_paths` 为准。
 
 | File | Action | Notes |
 |------|--------|-------|
@@ -86,6 +87,9 @@ Agent 需要的所有参考资料——不翻文档，直接看这里。
 
 ### 门控结论: PASS / CONCERNS / FAIL
 
+- **风险等级**: R0 / R1 / R2 / R3
+- **独立复核**: {required / not-required / completed}
+
 ### 验收标准验证
 - [x] / [!] / [ ] AC-01: {描述} — {证据：curl输出/截图/测试日志}
 - [x] / [!] / [ ] AC-02: ...
@@ -100,6 +104,7 @@ Agent 需要的所有参考资料——不翻文档，直接看这里。
 
 ### 下一阶段准入
 - [ ] 阻塞问题已清零
-- [ ] 代码已 commit
-- [ ] sprint.yaml 已更新
+- [ ] CONCERNS 已按风险策略接受，或不存在 CONCERNS
+- [ ] 任务状态与必要交接材料已更新
+- [ ] 如任务明确授权提交，commit 已完成；否则标记为不适用
 - [ ] 可以进入阶段 {N+1}
