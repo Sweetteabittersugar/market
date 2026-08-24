@@ -7,6 +7,10 @@ license: Proprietary. LICENSE.txt has complete terms
 
 # Requirements for Outputs
 
+## Routing Requirements
+
+Select model, reasoning depth, and orchestration from the workspace router policy and current task contract. This skill declares `spreadsheet_analysis`, `artifact_writing`, `recalculation`, and `verification` capabilities; it does not pin provider or model names.
+
 ## All Excel files
 
 ### Professional Font

@@ -7,6 +7,10 @@ license: Proprietary. LICENSE.txt has complete terms
 
 # PDF Processing Guide
 
+## Routing Requirements
+
+Select model, reasoning depth, and orchestration from the workspace router policy and current task contract. This skill declares `document_analysis`, `artifact_writing`, `rendering`, and `visual_verification` capabilities; it does not pin provider or model names.
+
 ## Overview
 
 This guide covers essential PDF processing operations using Python libraries and command-line tools. For advanced features, JavaScript libraries, and detailed examples, see REFERENCE.md. If you need to fill out a PDF form, read FORMS.md and follow its instructions.

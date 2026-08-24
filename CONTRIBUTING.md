@@ -1,37 +1,22 @@
 # Contributing
 
-## 快速开始
+Market v1 已 feature-complete，仓库归档后以只读稳定分发为主。维护采用 best-effort，不承诺固定响应 SLA；安全问题请按 [SECURITY.md](SECURITY.md) 私密报告。
+
+## 本地验证
 
 ```bash
-git clone https://github.com/Sweetteabittersugar/agency-v2.git
-cd agency-v2
-pip install -e .
+git clone https://github.com/Sweetteabittersugar/market.git
+cd market
+python scripts/verify.py
+git diff --check
 ```
 
-## 开发
+## 变更要求
 
-- Python ≥ 3.8，零额外依赖
-- 代码风格：PEP 8，4 空格缩进
-- 改代码后跑 `python -m py_compile` 检查所有 .py 文件
-- 改 stop.py 后跑 `python -m agency.hooks.stop` 手动测试（需要 stdin 输入 mock 数据）
+- 不重命名五个公开插件或把分发 ref 从 `master` 改走。
+- 插件版本、Marketplace 条目和 manifest 必须同步。
+- 不提交仓库 `.context`、内部治理记录、个人绝对路径、私有仓库链接、密钥或生成产物。
+- 用户项目可以有自己的 `.context` 约定，但插件不得依赖作者工作区。
+- PR 需说明结果、动机和可复现验证；CI 必须通过。
 
-## 提 PR
-
-1. Fork → Branch → PR
-2. PR 描述写清楚：做了什么、为什么、怎么测
-3. 确保 `python -m py_compile` 全部通过
-
-## 添加新 Agent
-
-1. 在 `agents/` 下创建 `<name>.md`
-2. 在 `AGENTS.md` 路由表添加一行
-3. 在 `docs/agents.md` 添加一行
-
-## 添加新 Skill
-
-1. 在 `skills/` 下创建 `<name>.md`
-2. 在 `docs/skills.md` 添加一行
-
-## 添加新模型定价
-
-编辑 `agency/cost.py` 中的 `PRICING_CNY_PER_M` 字典。同步更新 `agency/hooks/stop.py` 中的内联定价。
+新增 Agent 或 Skill 时，应同步更新所属插件内容、说明和验证规则。由于 v1 已封版，大规模功能扩张更适合 fork。

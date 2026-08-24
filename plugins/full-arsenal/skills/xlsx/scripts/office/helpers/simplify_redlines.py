@@ -171,16 +171,16 @@ def _get_authors_from_docx(docx_path: Path) -> dict[str, int]:
 
 def infer_author(modified_dir: Path, original_docx: Path, default: str = "Claude") -> str:
     modified_xml = modified_dir / "word" / "document.xml"
-    modified_authors = get_tracked_change_authors(modified_xml)
+    modified_contributors = get_tracked_change_authors(modified_xml)
 
-    if not modified_authors:
+    if not modified_contributors:
         return default
 
-    original_authors = _get_authors_from_docx(original_docx)
+    original_contributors = _get_authors_from_docx(original_docx)
 
     new_changes: dict[str, int] = {}
-    for author, count in modified_authors.items():
-        original_count = original_authors.get(author, 0)
+    for author, count in modified_contributors.items():
+        original_count = original_contributors.get(author, 0)
         diff = count - original_count
         if diff > 0:
             new_changes[author] = diff

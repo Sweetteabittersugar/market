@@ -281,7 +281,7 @@ def main():
         if memory.strip():
             parts.append(memory)
 
-        # ── Dreaming check (only for D:\ai project, 8h cooldown) ──
+        # ── Optional project-local dreaming hook ──
         dream_script = Path(cwd) / "scripts" / "dream.py"
         if dream_script.exists():
             try:
